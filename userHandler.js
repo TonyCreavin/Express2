@@ -34,7 +34,7 @@ const postUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Cannot load contact');
+      res.status(500).send('Error creating user');
     });
 };
 
