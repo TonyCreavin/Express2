@@ -1,4 +1,3 @@
-const { getRandomValues } = require('crypto');
 const database = require('./database');
 
 const movies = [
@@ -27,6 +26,24 @@ const movies = [
     duration: 180,
   },
 ];
+
+const deleteMovies = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  database
+    .query('delete from movies where id = ?', [id])
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        res.status(404).send('Not found');
+      } else {
+        res.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Problems deleting entry');
+    });
+};
 
 const putMovies = (req, res) => {
   const id = parseInt(req.params.id);
@@ -121,4 +138,5 @@ module.exports = {
   getMovieFromDbById,
   postMovies,
   putMovies,
+  deleteMovies,
 };
