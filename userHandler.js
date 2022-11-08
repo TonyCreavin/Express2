@@ -57,11 +57,29 @@ const postUsers = (req, res) => {
 };
 
 const getUsers = (req, res) => {
+  let sql = 'select * from users ';
+  const sqlValues = [];
+
+  if (req.query.language != null) {
+    sql += 'where language = ?';
+    sqlValues.push(req.query.language);
+
+    if (req.query.city != null) {
+      sql += 'and city = ?';
+      sqlValues.push(req.query.city);
+    }
+  } else if (req.query.city != null) {
+    sql += 'where city = ?';
+    sqlValues.push(req.query.city);
+  } else {
+    res.status(200);
+  }
+
   database
-    .query('select * from users')
-    .then((result) => {
-      console.log(result[0]);
-      res.json(result[0]);
+    .query(sql, sqlValues)
+    .then(([result]) => {
+      //console.log(result[0]);
+      res.json(result);
     })
     .catch((err) => {
       console.error(err);

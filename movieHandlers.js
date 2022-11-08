@@ -101,15 +101,30 @@ const getMovieFromJsonById = (req, res) => {
 };
 
 const getMoviesFromDB = (req, res) => {
+  let sql = 'select * from movies';
+  const sqlValues = [];
+
+  if (req.query.color != null) {
+    sql += ' where color = ?';
+    sqlValues.push(req.query.color);
+
+    if (req.query.max_duration != null) {
+      sql += 'and duration <= ?';
+      sqlValues.push(req.query.max_duration);
+    }
+  } else if (req.query.max_duration != null) {
+    sql += ' where duration <= ?';
+    sqlValues.push(req.query.max_duration);
+  }
+
   database
-    .query('select * from movies')
-    .then((result) => {
-      //console.log(result);
-      res.json(result[0]);
+    .query(sql, sqlValues)
+    .then(([movies]) => {
+      res.json(movies);
     })
     .catch((err) => {
-      // console.error(err);
-      res.status(500).send('Error retrieving movies from database');
+      console.error(err);
+      res.status(500).send('Error retrieving data from database');
     });
 };
 
